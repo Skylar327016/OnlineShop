@@ -90,15 +90,14 @@ class ShoppingcartTableViewCell: UITableViewCell {
         guard let cart = cart, let cartItem = cartItem, let itemPrice = Int(cartItem.itemPrice) else {return}
         let newSubtotal = String(quantity * itemPrice)
         self.cartItem?.subtotal = newSubtotal
-        DispatchQueue.main.async {
-            self.quantityTextField.text = String(quantity)
-            self.itemPriceLabel.text = "NT$ "+newSubtotal
-        }
         CartItemController.shared.updateQuantityAndSubtotal(of: cartItem, with: quantity, and: newSubtotal, in: cart) { (newCart) in
             guard let newCart = newCart else {return}
             self.cart = newCart
             controller.cart = newCart
-            Tool.shared.writeUserDefault(with: PropertyKeys.cart, and: newCart)
+        }
+        DispatchQueue.main.async {
+            self.quantityTextField.text = String(quantity)
+            self.itemPriceLabel.text = "NT$ "+newSubtotal
         }
     }
     

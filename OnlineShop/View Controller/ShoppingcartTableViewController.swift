@@ -17,9 +17,11 @@ class ShoppingcartTableViewController: UITableViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(false)
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
+        updateDataSource()
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(false)
+        Tool.shared.writeUserDefault(with: PropertyKeys.cart, and: self.cart)
     }
     func updateDataSource() {
         Tool.shared.readUserDefaultData(with: PropertyKeys.cart, and: [CartItem].self) { [self] (cart) in

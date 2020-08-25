@@ -25,13 +25,9 @@ struct CartItemController {
     
     func updateQuantityAndSubtotal(of cartItem: CartItem, with newQuantity: Int, and subtotal: String, in cart: [CartItem], with completion: @escaping ([CartItem]?) -> Void) {
         var newCart = cart
-print("new cart = \(newCart)")
         guard let cartItemIndex = cart.firstIndex(of: cartItem) else {return}
-print("index = \(cartItemIndex)")
         newCart[cartItemIndex].itemQuantity = String(newQuantity)
-print("quantity = \(newQuantity)")
         newCart[cartItemIndex].subtotal = subtotal
-print("subtotal = \(subtotal)")
         completion(newCart)
 
     }
