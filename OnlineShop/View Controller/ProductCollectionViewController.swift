@@ -4,8 +4,11 @@ class ProductCollectionViewController: UICollectionViewController {
     
     var products = [Product]()
     var likeList = [String]()
+    var loadingView = UIActivityIndicatorView()
+    var stillLoadingOrNot: Bool!
     override func viewDidLoad() {
         super.viewDidLoad()
+        loadingView = Tool.shared.setLoadingView(in: self, with: loadingView)
         loadFavoriteList()
         updateDataSource()
 //        let cart = [CartItem]()
@@ -45,11 +48,17 @@ class ProductCollectionViewController: UICollectionViewController {
     }
     
     func updateDataSource() {
-        ProductController.shared.fetechData { (products) in
+        DispatchQueue.main.async { [self] in
+            stillLoadingOrNot = true
+            Tool.shared.loading(activity: loadingView, is: stillLoadingOrNot)
+        }
+        ProductController.shared.fetechData { [self] (products) in
             guard let products = products else {return}
             self.products = products
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { [self] in
                 self.collectionView.reloadData()
+                stillLoadingOrNot = false
+                Tool.shared.loading(activity: loadingView, is: stillLoadingOrNot)
             }
         }
     }

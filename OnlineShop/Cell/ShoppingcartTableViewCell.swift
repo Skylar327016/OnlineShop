@@ -21,7 +21,7 @@ class ShoppingcartTableViewCell: UITableViewCell {
 
     @IBAction func removeFromCart(_ sender: UIButton) {
         guard let controller = delegate as? ShoppingcartTableViewController else {return}
-        guard let cart = self.cart, let cartItem = self.cartItem, let cartIndex = cart.firstIndex(of: cartItem) else {return}
+        guard let cart = self.cart, let cartItem = self.cartItem else {return}
         CartItemController.shared.remove(cartItem: cartItem, in: cart) { (newCart) in
             guard let newCart = newCart else {return}
             self.cart = newCart
@@ -85,8 +85,8 @@ class ShoppingcartTableViewCell: UITableViewCell {
         }
     }
     func updateQuantityAndSubtotalLabels(with quantity:Int) {
-        self.cartItem?.itemQuantity = String(quantity)
         guard let controller = delegate as? ShoppingcartTableViewController else {return}
+        self.cartItem?.itemQuantity = String(quantity)
         guard let cart = cart, let cartItem = cartItem, let itemPrice = Int(cartItem.itemPrice) else {return}
         let newSubtotal = String(quantity * itemPrice)
         self.cartItem?.subtotal = newSubtotal
@@ -94,14 +94,8 @@ class ShoppingcartTableViewCell: UITableViewCell {
             self.quantityTextField.text = String(quantity)
             self.itemPriceLabel.text = "NT$ "+newSubtotal
         }
-print("斷點")
-print("cartItem = \(cartItem)")
-cart.forEach { (item) in
-    print("item name = \(item.itemName)")
-}
         CartItemController.shared.updateQuantityAndSubtotal(of: cartItem, with: quantity, and: newSubtotal, in: cart) { (newCart) in
             guard let newCart = newCart else {return}
-print("newCart =\(newCart)")
             self.cart = newCart
             controller.cart = newCart
             Tool.shared.writeUserDefault(with: PropertyKeys.cart, and: newCart)

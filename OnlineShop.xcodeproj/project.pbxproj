@@ -120,7 +120,6 @@
 				94C019BC24F0B4E600C5195C /* PropertyKeys.swift */,
 				94C019BF24F0C64800C5195C /* Product.swift */,
 				94EA267324F2028400177B6C /* JsonStructure.swift */,
-				94CA669824F356B7001F0072 /* Tool.swift */,
 				94CA669A24F35A95001F0072 /* CartItem.swift */,
 			);
 			path = Model;
@@ -131,6 +130,7 @@
 			children = (
 				94C019C524F0C83700C5195C /* ProductController.swift */,
 				94CA669C24F427AE001F0072 /* CartItemController.swift */,
+				94CA669824F356B7001F0072 /* Tool.swift */,
 			);
 			path = "Model Controller";
 			sourceTree = "<group>";
