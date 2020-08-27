@@ -20,19 +20,22 @@ class ShoppingcartTableViewCell: UITableViewCell {
     var delegate: ShoppingcartTableViewCellDelegate?
 
     @IBAction func removeFromCart(_ sender: UIButton) {
-        guard let controller = delegate as? ShoppingcartTableViewController else {return}
-        guard let cart = self.cart, let cartItem = self.cartItem else {return}
-        CartItemController.shared.remove(cartItem: cartItem, in: cart) { (newCart) in
-            guard let newCart = newCart else {return}
-            self.cart = newCart
-            controller.cart = newCart
-            Tool.shared.writeUserDefault(with: PropertyKeys.cart, and: newCart)
-            DispatchQueue.main.async {
-                controller.tableView.reloadData()
+        delegate?.confirmAction(with: { [self] (positive) in
+            guard let positive = positive else {return}
+            if positive {
+                guard let controller = delegate as? ShoppingcartTableViewController else {return}
+                guard let cartItem = self.cartItem else {return}
+                CartManager.shared.remove(cartItem: cartItem) { [self] (newCart) in
+                    guard let newCart = newCart else {return}
+                    self.cart = newCart
+                    DispatchQueue.main.async {
+                        controller.tableView.reloadData()
+                    }
+                }
             }
-            
-            
-        }
+        })
+        
+
     }
     @IBAction func changeQuantity(_ sender: UIButton) {
         guard let qty = quantityTextField.text, let currentQuantity = Int(qty) else {return} 
@@ -64,7 +67,8 @@ class ShoppingcartTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
     }
     func configure(with cartItem: CartItem, at row: Int) {
-        self.loadCart(and: cartItem)
+        self.cart = CartManager.shared.shoppingcart
+        self.cartItem = cartItem
         self.selectionStyle = .none
         DispatchQueue.main.async { [self] in
             let image = ProductController.shared.loadProductImage(with: cartItem.itemImageUrl)
@@ -77,23 +81,15 @@ class ShoppingcartTableViewCell: UITableViewCell {
         }
         
     }
-    func loadCart(and cartItem: CartItem) {
-        self.cartItem = cartItem
-        Tool.shared.readUserDefaultData(with: PropertyKeys.cart, and: [CartItem].self) { (cart) in
-            guard let cart = cart else {return}
-            self.cart = cart
-        }
-    }
+
     func updateQuantityAndSubtotalLabels(with quantity:Int) {
-        guard let controller = delegate as? ShoppingcartTableViewController else {return}
         self.cartItem?.itemQuantity = String(quantity)
-        guard let cart = cart, let cartItem = cartItem, let itemPrice = Int(cartItem.itemPrice) else {return}
+        guard let cartItem = cartItem, let itemPrice = Int(cartItem.itemPrice) else {return}
         let newSubtotal = String(quantity * itemPrice)
         self.cartItem?.subtotal = newSubtotal
-        CartItemController.shared.updateQuantityAndSubtotal(of: cartItem, with: quantity, and: newSubtotal, in: cart) { (newCart) in
+        CartManager.shared.updateQuantityAndSubtotal(of: cartItem, with: quantity, and: newSubtotal) { (newCart) in
             guard let newCart = newCart else {return}
             self.cart = newCart
-            controller.cart = newCart
         }
         DispatchQueue.main.async {
             self.quantityTextField.text = String(quantity)

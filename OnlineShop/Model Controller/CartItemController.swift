@@ -23,18 +23,4 @@ struct CartItemController {
         return cartItem
     }
     
-    func updateQuantityAndSubtotal(of cartItem: CartItem, with newQuantity: Int, and subtotal: String, in cart: [CartItem], with completion: @escaping ([CartItem]?) -> Void) {
-        var newCart = cart
-        guard let cartItemIndex = cart.firstIndex(of: cartItem) else {return}
-        newCart[cartItemIndex].itemQuantity = String(newQuantity)
-        newCart[cartItemIndex].subtotal = subtotal
-        completion(newCart)
-
-    }
-    func remove(cartItem: CartItem, in cart: [CartItem], completion: @escaping ([CartItem]?) -> Void){
-        var newCart = cart
-        guard let cartItemIndex = cart.firstIndex(of: cartItem) else {return}
-        newCart.remove(at: cartItemIndex)
-        completion(newCart)
-    }
 }

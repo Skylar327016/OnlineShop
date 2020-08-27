@@ -8,4 +8,5 @@
 import Foundation
 protocol ShoppingcartTableViewCellDelegate {
     func showMessage()
+    func confirmAction(with completionHandler: @escaping (Bool?) -> Void)
 }

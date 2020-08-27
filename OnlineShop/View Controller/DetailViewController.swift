@@ -15,23 +15,21 @@ class DetailViewController: UIViewController {
     
     @IBAction func cartButtonTapped(_ sender: UIButton) {
         //cartItem
-        
         let cartItem = CartItemController.shared.newCartItem(with: productToShowDetail, chosenColor: colorTextField.text!, chosenIndex: sizeSegmentedControl.selectedSegmentIndex, quantity: quantityTextFeild.text!)
         
         var newCart = [CartItem]()
-        Tool.shared.readUserDefaultData(with: PropertyKeys.cart, and: [CartItem].self) { (cart) in
-            guard let cart = cart else {return}
-            newCart.append(contentsOf: cart)
-        }
+        newCart.append(contentsOf: CartManager.shared.shoppingcart)
         if newCart.contains(cartItem) {
             let index = newCart.firstIndex(of: cartItem)!
-            var quantityBeforeUpdate = Int(newCart[index].itemQuantity)!
-            newCart[index].itemQuantity = "\(quantityBeforeUpdate += 1)"
+            guard let quantity = Int(newCart[index].itemQuantity) else {return}
+            var quantityBeforeUpdate = quantity
+            quantityBeforeUpdate += 1
+            newCart[index].itemQuantity = String(quantityBeforeUpdate)
         }else{
             newCart.append(cartItem)
         }
         print("cart.count = \(newCart.count)")
-        Tool.shared.writeUserDefault(with: PropertyKeys.cart, and: newCart)
+        CartManager.shared.shoppingcart = newCart
         
         //分辨按鈕
         if sender.tag == 0 {

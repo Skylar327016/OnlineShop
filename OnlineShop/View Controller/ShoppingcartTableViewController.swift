@@ -19,17 +19,10 @@ class ShoppingcartTableViewController: UITableViewController {
         super.viewWillAppear(false)
         updateDataSource()
     }
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(false)
-        Tool.shared.writeUserDefault(with: PropertyKeys.cart, and: self.cart)
-    }
     func updateDataSource() {
-        Tool.shared.readUserDefaultData(with: PropertyKeys.cart, and: [CartItem].self) { [self] (cart) in
-            guard let cart = cart else {return}
-            self.cart = cart
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
+        self.cart = CartManager.shared.shoppingcart
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
         }
     }
     
@@ -59,5 +52,16 @@ class ShoppingcartTableViewController: UITableViewController {
 extension ShoppingcartTableViewController: ShoppingcartTableViewCellDelegate {
     func showMessage() {
         Tool.shared.showAlert(in: self, with: "Hello World")
+    }
+    func confirmAction(with completionHandler: @escaping (Bool?) -> Void) {
+        let controller = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        controller.addAction(UIAlertAction(title: "刪除商品", style: .default, handler: { (_) in
+            completionHandler(true)
+        }))
+        controller.addAction(UIAlertAction(title: "取消", style: .cancel, handler: {
+            (_) in
+            completionHandler(false)
+        }))
+        present(controller, animated: true, completion: nil)
     }
 }

@@ -6,11 +6,13 @@ class ProductCollectionViewController: UICollectionViewController {
     var likeList = [String]()
     var loadingView = UIActivityIndicatorView()
     var stillLoadingOrNot: Bool!
+    var cart:[CartItem]?
     override func viewDidLoad() {
         super.viewDidLoad()
         loadingView = Tool.shared.setLoadingView(in: self, with: loadingView)
         loadFavoriteList()
         updateDataSource()
+        loadCart()
 //        let cart = [CartItem]()
 //        Tool.shared.writeUserDefault(with: PropertyKeys.cart, and: cart)
     }
@@ -23,6 +25,7 @@ class ProductCollectionViewController: UICollectionViewController {
         super.viewWillAppear(true)
         loadFavoriteList()
         updateDataSource()
+        self.cart = CartManager.shared.shoppingcart
     }
 
 
@@ -61,6 +64,15 @@ class ProductCollectionViewController: UICollectionViewController {
                 Tool.shared.loading(activity: loadingView, is: stillLoadingOrNot)
             }
         }
+    }
+    
+    func loadCart() {
+        Tool.shared.readUserDefaultData(with: PropertyKeys.cart, and: [CartItem].self) { (cart) in
+            guard let cart = cart else {return}
+            CartManager.shared.shoppingcart = cart
+            self.cart = cart
+        }
+        
     }
 
     func loadFavoriteList() {
