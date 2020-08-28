@@ -10,7 +10,9 @@ import UIKit
 class ShoppingcartTableViewController: UITableViewController {
     
     var cart = [CartItem]()
-    @IBOutlet weak var totalLabel: UILabel!
+    var heightForHeader:CGFloat = 0.0
+    var heightForFooter:CGFloat = 0.0
+    var footer: FooterViewCell?
     override func viewDidLoad() {
         super.viewDidLoad()
         updateDataSource()
@@ -21,9 +23,10 @@ class ShoppingcartTableViewController: UITableViewController {
     }
     func updateDataSource() {
         self.cart = CartManager.shared.shoppingcart
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [self] in
             self.tableView.reloadData()
         }
+        
     }
     
 
@@ -37,6 +40,7 @@ class ShoppingcartTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         return cart.count
+        
     }
 
     
@@ -45,14 +49,60 @@ class ShoppingcartTableViewController: UITableViewController {
         cell.configure(with: cart[indexPath.row], at: indexPath.row)
         cell.delegate = self
         return cell
+        
     }
     
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if cart.count == 0 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: PropertyKeys.header) as! HeaderViewCell
+            return cell.contentView
+        }else {
+            return nil
+        }
+        
+    }
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if cart.count == 0 {
+            heightForHeader = tableView.frame.height
+            tableView.isScrollEnabled = false
+        }else {
+            tableView.isScrollEnabled = true
+            heightForHeader = 0
+        }
+        return heightForHeader
+    }
+ 
+    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        if cart.count == 0 {
+            self.footer = nil
+            return nil
+        } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: PropertyKeys.footer) as! FooterViewCell
+            cell.setUp()
+            self.footer = cell
+            return cell.contentView
+        }
+    }
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        if cart.count != 0 {
+            heightForFooter = 90
+        }else {
+            heightForFooter = 0
+        }
+        return heightForFooter
+    }
 }
 
+
 extension ShoppingcartTableViewController: ShoppingcartTableViewCellDelegate {
-    func showMessage() {
-        Tool.shared.showAlert(in: self, with: "Hello World")
+    func showMessage(with message: String) {
+        Tool.shared.showAlert(in: self, with: message)
+        
+        let testView = UIView()
+        tableView.tableHeaderView = testView
+        tableView.tableHeaderView = nil
     }
+
     func confirmAction(with completionHandler: @escaping (Bool?) -> Void) {
         let controller = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         controller.addAction(UIAlertAction(title: "刪除商品", style: .default, handler: { (_) in

@@ -46,38 +46,39 @@ class DetailViewController: UIViewController {
     var colors = [String]()
     var selectedColor: String!
     var pickerField: UITextField!
-    var likeList = [String]()
+    var favoriteList = [String]()
     @IBAction func productLikeButtonTapped(_ sender: UIButton) {
-        let userDefault = UserDefaults.standard
-        if let oldList = userDefault.stringArray(forKey: "likeList") {
-            if oldList.contains(productNameTextView.text!) {
-                var likeList = oldList
-                likeList.removeAll { (product) -> Bool in
-                    let isMatch = product == productNameTextView.text!
-                    return isMatch
-                }
-                userDefault.setValue(likeList, forKey: "likeList")
-                DispatchQueue.main.async {
-                    self.productLikeButton.imageView?.image = UIImage(systemName: "heart")
-                }
-            }else {
-                var likeList = oldList
-                likeList.append(productNameTextView.text!)
-                userDefault.setValue(likeList, forKey: "likeList")
-                DispatchQueue.main.async {
-                    self.productLikeButton.imageView?.image = UIImage(systemName: "heart.fill")
-                }
+        var favoriteList = FavoriteListManager.shared.favoriteList
+        if favoriteList.contains(productNameTextView.text!) {
+            favoriteList.removeAll { (product) -> Bool in
+                let isMatch = product == productNameTextView.text!
+                return isMatch
+            }
+            DispatchQueue.main.async {
+                self.productLikeButton.imageView?.image = UIImage(systemName: "heart")
+            }
+            
+        }else {
+            favoriteList.append(productNameTextView.text!)
+            DispatchQueue.main.async {
+                self.productLikeButton.imageView?.image = UIImage(systemName: "heart.fill")
             }
         }
+        FavoriteListManager.shared.favoriteList = favoriteList
     }
     @IBAction func plusButton(_ sender: UIButton) {
         var quantity = Int(quantityTextFeild.text!)!
-        quantity += 1
-        DispatchQueue.main.async {
-            self.quantityTextFeild.text = String(quantity)
+        if quantity < 5 {
+            quantity += 1
+            DispatchQueue.main.async {
+                self.quantityTextFeild.text = String(quantity)
+            }
+        }else {
+            Tool.shared.showAlert(in: self, with: "一次最多只能購買五件")
         }
     }
     @IBAction func minusButton(_ sender: UIButton) {
+        
         var quantity = Int(quantityTextFeild.text!)!
         if quantity > 1 {
             quantity -= 1
@@ -90,18 +91,13 @@ class DetailViewController: UIViewController {
         super.viewDidLoad()
         scrollView.showsVerticalScrollIndicator = false
         colorTextField.delegate = self
-        loadFavoriteList()
+        favoriteList = FavoriteListManager.shared.favoriteList
         ProductController.shared.fetchProductColor(with: productToShowDetail.productColors) { (colors) in
             guard let colors = colors else {return}
             self.colors = colors
             selectedColor = colors[0]
             showDetail(of: productToShowDetail)
         }
-    }
-    func loadFavoriteList() {
-        let userDefault = UserDefaults.standard
-        guard let likeList = userDefault.stringArray(forKey: "likeList") else {return}
-        self.likeList = likeList
     }
     
     func showDetail(of product: Product) {
@@ -111,7 +107,7 @@ class DetailViewController: UIViewController {
         productPriceLabel.text = "NT$ \(product.productPrice)"
         colorTextField.text = selectedColor
         colorLabel.text = "\(colors.count) Colours"
-        likeList.forEach { (favoriteProduct) in
+        favoriteList.forEach { (favoriteProduct) in
             if product.productName == favoriteProduct {
                 DispatchQueue.main.async {
                     self.productLikeButton.imageView!.image = UIImage(systemName: "heart.fill")!

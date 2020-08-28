@@ -13,27 +13,22 @@ class ProductCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var productLikeButton: UIButton!
     @IBOutlet weak var productPriceLabel: UILabel!
     @IBAction func productLikeButtonTapped(_ sender: UIButton) {
-        let userDefault = UserDefaults.standard
-        if let oldList = userDefault.stringArray(forKey: "likeList") {
-            if oldList.contains(productNameTextView.text!) {
-                var likeList = oldList
-                likeList.removeAll { (product) -> Bool in
-                    let isMatch = product == productNameTextView.text!
-                    return isMatch
-                }
-                userDefault.setValue(likeList, forKey: "likeList")
-                DispatchQueue.main.async {
-                    self.productLikeButton.imageView?.image = UIImage(systemName: "heart")
-                }
-            }else {
-                var likeList = oldList
-                likeList.append(productNameTextView.text!)
-                userDefault.setValue(likeList, forKey: "likeList")
-                DispatchQueue.main.async {
-                    self.productLikeButton.imageView?.image = UIImage(systemName: "heart.fill")
-                }
+        var favoriteList = FavoriteListManager.shared.favoriteList
+        if favoriteList.contains(productNameTextView.text!) {
+            favoriteList.removeAll { (product) -> Bool in
+                let isMatch = product == productNameTextView.text!
+                return isMatch
+            }
+            DispatchQueue.main.async {
+                self.productLikeButton.imageView?.image = UIImage(systemName: "heart")
+            }
+            
+        }else {
+            favoriteList.append(productNameTextView.text!)
+            DispatchQueue.main.async {
+                self.productLikeButton.imageView?.image = UIImage(systemName: "heart.fill")
             }
         }
-        
+        FavoriteListManager.shared.favoriteList = favoriteList
     }
 }

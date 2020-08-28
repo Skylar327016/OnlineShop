@@ -44,7 +44,21 @@ class ShoppingcartTableViewCell: UITableViewCell {
                 let newQuantity = currentQuantity - 1
                 updateQuantityAndSubtotalLabels(with: newQuantity)
             }else {
-                delegate?.showMessage()
+                delegate?.confirmAction(with: { [self] (positive) in
+                    guard let positive = positive else {return}
+                    if positive {
+                        guard let controller = delegate as? ShoppingcartTableViewController else {return}
+                        guard let cartItem = self.cartItem else {return}
+                        CartManager.shared.remove(cartItem: cartItem) { [self] (newCart) in
+                            guard let newCart = newCart else {return}
+                            self.cart = newCart
+                            controller.cart = newCart
+                            DispatchQueue.main.async {
+                                controller.tableView.reloadData()
+                            }
+                        }
+                    }
+                })
                 
             }
         }else if sender.tag == 1{
@@ -52,7 +66,7 @@ class ShoppingcartTableViewCell: UITableViewCell {
                 let newQuantity = currentQuantity + 1
                 updateQuantityAndSubtotalLabels(with: newQuantity)
             }else {
-                delegate?.showMessage()
+                delegate?.showMessage(with: "一次只能購買最多五件")
             }
         }
     }
@@ -87,14 +101,18 @@ class ShoppingcartTableViewCell: UITableViewCell {
         guard let cartItem = cartItem, let itemPrice = Int(cartItem.itemPrice) else {return}
         let newSubtotal = String(quantity * itemPrice)
         self.cartItem?.subtotal = newSubtotal
-        CartManager.shared.updateQuantityAndSubtotal(of: cartItem, with: quantity, and: newSubtotal) { (newCart) in
+        CartManager.shared.updateQuantityAndSubtotal(of: cartItem, with: quantity, and: newSubtotal) { [self] (newCart) in
             guard let newCart = newCart else {return}
             self.cart = newCart
+            guard let controller = delegate as? ShoppingcartTableViewController, let footer = controller.footer else {return}
+            DispatchQueue.main.async {
+                self.quantityTextField.text = String(quantity)
+                self.itemPriceLabel.text = "NT$ "+newSubtotal
+                footer.setUp()
+            }
         }
-        DispatchQueue.main.async {
-            self.quantityTextField.text = String(quantity)
-            self.itemPriceLabel.text = "NT$ "+newSubtotal
-        }
+      
     }
     
 }
+

@@ -22,4 +22,12 @@ struct CartManager{
         shoppingcart.remove(at: cartItemIndex)
         completion(shoppingcart)
     }
+    func getTotal() -> String?{
+        var total = 0
+        for cartItem in shoppingcart {
+            guard let quantity = Int(cartItem.itemQuantity), let price = Int(cartItem.itemPrice) else {return nil}
+            total += quantity * price
+        }
+        return String(total)
+    }
 }
