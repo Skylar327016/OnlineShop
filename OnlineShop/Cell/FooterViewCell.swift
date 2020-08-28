@@ -10,6 +10,7 @@ import UIKit
 class FooterViewCell: UITableViewCell {
     
     @IBOutlet weak var totalLabel: UILabel!
+    @IBOutlet weak var titleLabel: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -20,13 +21,20 @@ class FooterViewCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
-    func setUp() {
-        guard let total = CartManager.shared.getTotal() else {return}
-        let totalPrice = "NT$ "+total
+    func setUp(with totalPrice:String) {
         backgroundColor = .white
+        titleLabel.text = "Total:"
         DispatchQueue.main.async {
             self.totalLabel.text = totalPrice
         }
+    }
+    func update(with cart:[CartItem]) -> String{
+        var total = 0
+        for cartItem in cart {
+            guard let quantity = Int(cartItem.itemQuantity), let price = Int(cartItem.itemPrice) else {return "0"}
+            total += quantity * price
+        }
+        return String(total)
     }
 }
 

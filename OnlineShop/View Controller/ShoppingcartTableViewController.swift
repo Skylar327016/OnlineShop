@@ -64,9 +64,7 @@ class ShoppingcartTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if cart.count == 0 {
             heightForHeader = tableView.frame.height
-            tableView.isScrollEnabled = false
         }else {
-            tableView.isScrollEnabled = true
             heightForHeader = 0
         }
         return heightForHeader
@@ -78,8 +76,11 @@ class ShoppingcartTableViewController: UITableViewController {
             return nil
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: PropertyKeys.footer) as! FooterViewCell
-            cell.setUp()
-            self.footer = cell
+            if let total = CartManager.shared.getTotal() {
+                let totalPrice = "NT$ "+total
+                cell.setUp(with: totalPrice)
+                self.footer = cell
+            }
             return cell.contentView
         }
     }
@@ -97,10 +98,6 @@ class ShoppingcartTableViewController: UITableViewController {
 extension ShoppingcartTableViewController: ShoppingcartTableViewCellDelegate {
     func showMessage(with message: String) {
         Tool.shared.showAlert(in: self, with: message)
-        
-        let testView = UIView()
-        tableView.tableHeaderView = testView
-        tableView.tableHeaderView = nil
     }
 
     func confirmAction(with completionHandler: @escaping (Bool?) -> Void) {

@@ -39,11 +39,18 @@ struct ProductController {
         }.resume()
     }
     func loadProductImage(with imageUrl: String) -> UIImage {
-        if let url = URL(string: imageUrl), let data = try? Data(contentsOf: url), let image = UIImage(data: data) {
+        guard let url = URL(string: imageUrl) else {return UIImage(named: "noImage")!}
+        let tempDirectory = FileManager.default.temporaryDirectory
+        let imageFileUrl = tempDirectory.appendingPathComponent(url.lastPathComponent)
+        if FileManager.default.fileExists(atPath: imageFileUrl.path) {
+            let image = UIImage(contentsOfFile: imageFileUrl.path)!
             return image
         }else {
-            return UIImage(named: "noImage")!
+            guard let data = try? Data(contentsOf: url), let image = UIImage(data: data) else {return UIImage(named: "noImage")!}
+            try? data.write(to: imageFileUrl)
+            return image
         }
+        
     }
     
     func fetchProductColor(with productColors: String, completion: ([String]?) -> Void){

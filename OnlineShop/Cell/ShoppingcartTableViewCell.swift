@@ -28,6 +28,7 @@ class ShoppingcartTableViewCell: UITableViewCell {
                 CartManager.shared.remove(cartItem: cartItem) { [self] (newCart) in
                     guard let newCart = newCart else {return}
                     self.cart = newCart
+                    controller.cart = newCart
                     DispatchQueue.main.async {
                         controller.tableView.reloadData()
                     }
@@ -105,10 +106,11 @@ class ShoppingcartTableViewCell: UITableViewCell {
             guard let newCart = newCart else {return}
             self.cart = newCart
             guard let controller = delegate as? ShoppingcartTableViewController, let footer = controller.footer else {return}
+            let totalPrice = footer.update(with: newCart)
             DispatchQueue.main.async {
                 self.quantityTextField.text = String(quantity)
                 self.itemPriceLabel.text = "NT$ "+newSubtotal
-                footer.setUp()
+                controller.footer?.totalLabel.text = "NT$ "+totalPrice
             }
         }
       

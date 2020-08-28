@@ -14,9 +14,7 @@ struct Tool {
     let jsonDecoder = JSONDecoder()
     func showAlert(in viewController: UIViewController, with message: String) {
         let controller = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-        controller.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
-            viewController.dismiss(animated: true, completion: nil)
-        }))
+        controller.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         viewController.present(controller, animated: true, completion: nil)
     }
 
@@ -55,7 +53,7 @@ print("資料儲存成功")
     }
     func setLoadingView(in viewController: UITableViewController, with loadingView: UIActivityIndicatorView) -> UIActivityIndicatorView{
         let view = viewController.view!
-        let frame = CGRect(origin: .zero, size: viewController.view.frame.size)
+        let frame = CGRect(origin: .zero, size: viewController.tableView.frame.size)
         loadingView.frame = frame
         loadingView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(loadingView)

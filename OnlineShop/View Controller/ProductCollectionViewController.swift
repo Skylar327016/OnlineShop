@@ -13,9 +13,6 @@ class ProductCollectionViewController: UICollectionViewController {
         loadCart()
         loadFavoriteList()
         updateDataSource()
-        
-//        let cart = [CartItem]()
-//        Tool.shared.writeUserDefault(with: PropertyKeys.cart, and: cart)
     }
     
     override func viewDidLayoutSubviews() {
@@ -26,8 +23,9 @@ class ProductCollectionViewController: UICollectionViewController {
         super.viewWillAppear(true)
         self.favoriteList = FavoriteListManager.shared.favoriteList
         self.cart = CartManager.shared.shoppingcart
-        updateDataSource()
-        
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
     }
 
 

@@ -14,7 +14,7 @@
         <scene sceneID="DD3-h1-aRH">
             <objects>
                 <collectionViewController id="fJx-bd-u7D" customClass="ProductCollectionViewController" customModule="OnlineShop" customModuleProvider="target" sceneMemberID="viewController">
-                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" dataMode="prototypes" id="mdy-hx-ssc">
+                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" alwaysBounceVertical="YES" showsVerticalScrollIndicator="NO" bouncesZoom="NO" dataMode="prototypes" id="mdy-hx-ssc">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -567,19 +567,28 @@
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="90"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Total:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bcg-uF-1iL">
-                                            <rect key="frame" x="306.5" y="30" width="63.5" height="30"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bcg-uF-1iL">
+                                            <rect key="frame" x="370" y="45" width="0.0" height="0.0"/>
+                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
+                                            <color key="textColor" red="1" green="0.30951165730000002" blue="0.1204213784" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Total:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0e5-KZ-QBI">
+                                            <rect key="frame" x="290.5" y="30" width="63.5" height="30"/>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="25"/>
                                             <color key="textColor" red="1" green="0.30951165730000002" blue="0.1204213784" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
                                     <constraints>
+                                        <constraint firstItem="bcg-uF-1iL" firstAttribute="leading" secondItem="0e5-KZ-QBI" secondAttribute="trailing" constant="16" id="08K-qK-AOB"/>
                                         <constraint firstAttribute="trailingMargin" secondItem="bcg-uF-1iL" secondAttribute="trailing" constant="24" id="eLB-3P-9R6"/>
                                         <constraint firstItem="bcg-uF-1iL" firstAttribute="centerY" secondItem="68c-RK-8eX" secondAttribute="centerY" id="uqQ-zN-K0n"/>
+                                        <constraint firstItem="0e5-KZ-QBI" firstAttribute="centerY" secondItem="68c-RK-8eX" secondAttribute="centerY" id="wve-tQ-Lxg"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
+                                    <outlet property="titleLabel" destination="0e5-KZ-QBI" id="Kha-g7-R6I"/>
                                     <outlet property="totalLabel" destination="bcg-uF-1iL" id="6qN-g0-2X2"/>
                                 </connections>
                             </tableViewCell>
